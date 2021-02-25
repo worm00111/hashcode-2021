@@ -19,10 +19,10 @@ class Intersection():
 		self.id = id
 
 		self.streets_in = []
-		self.intersection_in = []
+		self.intersections_in = []
 		
 		self.streets_out = []
-		self.intersection_out = []
+		self.intersections_out = []
 
 	def add_street_in(self, street_name):
 		self.streets_in.append(street_name)
@@ -31,15 +31,15 @@ class Intersection():
 		self.streets_out.append(street_name)
 
 	def add_intersection_in(self, start_intersection):
-		self.intersection_in.append(start_intersection)
+		self.intersections_in.append(start_intersection)
 
 	def add_intersection_out(self, end_intersection):
-		self.intersection_out.append(end_intersection)
+		self.intersections_out.append(end_intersection)
 
 # Input
 for FILE in os.listdir('.'):
 	# Skip non-input files and d (since that's too slow)
-	if not FILE.endswith('.txt') or FILE.startswith('d'):
+	if not FILE.endswith('.txt'):
 		continue
 
 	# Read in content of file
@@ -60,32 +60,89 @@ for FILE in os.listdir('.'):
 	car_map = {}
 	index = 0
 	for line_ix2 in range(S+1, S+V+1):
-		# #number of streets to travel, #list of street names to travel
+		# P = #number of streets to travel, car_path_list = #list of street names to travel
 		car_list = list(map(str, lines[line_ix2].strip().split()))
 		P = int(car_list[0])
 		car_path_list = car_list[1:]
 		car_map[index] = {"P": P, "car_path_list": car_path_list}
 		index = index + 1
 
-intersections = OrderedDict()
-# Create intersection map
-for street_key, street_value in streets.items():
-	if not street_value['B'] in intersections:
-		ins = Intersection(street_value['B'])
-		intersections[street_value['B']] = ins
+	# Create intersection map
+	intersections = OrderedDict()
+	for street_key, street_value in streets.items():
+		if not street_value['B'] in intersections:
+			ins = Intersection(street_value['B'])
+			intersections[street_value['B']] = ins
+		
+
+		if not street_value['E'] in intersections:
+			ins = Intersection(street_value['E'])
+			intersections[street_value['E']] = ins
+
+		# Add out intersections and streets
+		intersections[street_value['B']].add_intersection_out(intersections[street_value['E']])
+		intersections[street_value['B']].add_street_out(street_key)
+
+		# Add in intersections and streets
+		intersections[street_value['E']].add_intersection_in(intersections[street_value['B']])
+		intersections[street_value['E']].add_street_in(street_key)
+
+	shortestCar = 0
+	sum_of_time = 0
+	street_name = ""
+	# For every car
+	for car_key, car_value in car_map.items():
+		# For every street the car has to take
+		for i in range(1, P):
+			sum_of_time = 0
+			# For every street
+			for street_key, street_value in streets.items():
+				# Get the street name
+				street_name = car_path_list[i]
+				# add 
+				sum_of_time = sum_of_time + street_value["L"]
+
+			if(sum_of_time < D):
+				shortestCar = car_key
+				break
+
+	if(sum_of_time < D):
+		break
 	
 
-	if not street_value['E'] in intersections:
-		ins = Intersection(street_value['E'])
-		intersections[street_value['E']] = ins
+	results = []
+	roadTimes = {}
+	firstIntersection = intersections[0]
 
-	# Add out intersections and streets
-	intersections[street_value['B']].add_intersection_out(intersections[street_value['E']])
-	intersections[street_value['B']].add_street_out(street_key)
+	# Find the first intersection
+	start = car_map[shortestCar].car_path_list[0]
+	for i in range(1, car_map[car_path_list]):
+		for intersection_key, intersection_value in intersections.items():
+			if start in intersection_value.streets_in:
+				firstIntersection = intersection_value
 
-	# Add in intersections and streets
-	intersections[street_value['E']].add_intersection_in(intersections[street_value['B']])
-	intersections[street_value['E']].add_street_in(street_key)
+
+	length = 0
+	current_street = car_map[shortestCar].car_path_list[1]
+	# Get the length of the second road
+	while (#not at the end of the path):
+		for i, street in enumerate(firstIntersection.streets_out):
+			if street == current_street:
+				for street_key, street_value in streets.items():
+					length = street_key["street"].L
+				
+			
+		
+
+	# BASIC algortithm and output
+	with open('{}.out'.format(FILE), 'w+') as ofp:
+		ofp.write('{}\n'.format(len(intersections)))
+		for intersection_key, intersection_value in intersections.items():
+			ofp.write('{}\n'.format(intersection_value.id))
+			ofp.write('1\n')
+			ofp.write('{} {}\n'.format(intersection_value.streets_in[0], 1))
+
+	print(FILE)
 
 """
 	# Getting the best remaining books from a library
