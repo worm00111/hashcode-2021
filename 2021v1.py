@@ -1,4 +1,5 @@
 import numpy as np
+from collections import OrderedDict
 from tqdm import tqdm
 import os
 import warnings
@@ -14,18 +15,26 @@ class Library():
 """
 
 class Intersection():
-	def __init__(self):
+	def __init__(self, id):
+		self.id = id
+
 		self.streets_in = []
-		self.intersection_in []
+		self.intersection_in = []
 		
 		self.streets_out = []
-		self.intersection_out []
+		self.intersection_out = []
 
 	def add_street_in(self, street_name):
 		self.streets_in.append(street_name)
 
-	def add_end_intersection(self, end_intersection: Intersection):
-		self.end_intersection = end_intersection
+	def add_street_out(self, street_name):
+		self.streets_out.append(street_name)
+
+	def add_intersection_in(self, start_intersection):
+		self.intersection_in.append(start_intersection)
+
+	def add_intersection_out(self, end_intersection):
+		self.intersection_out.append(end_intersection)
 
 # Input
 for FILE in os.listdir('.'):
@@ -41,7 +50,7 @@ for FILE in os.listdir('.'):
 	# #Simulation time #Intersections #Streets #Cars #Score for car
 	D, I, S, V, F = list(map(int, lines[0].strip().split()))
 	
-	streets = {}
+	streets = OrderedDict()
 	# Read in streets. Key = street id value = {start_interserction, end_intersection, name, seconds}
 	for line_ix in range(1, S):
 		# #start_intersection, #end_intersection, #seconds
@@ -58,37 +67,29 @@ for FILE in os.listdir('.'):
 		car_map[index] = {"P": P, "car_path_list": car_path_list}
 		index = index + 1
 
-	breakpoint()
-
-intersections = {}
-# Create intersection map. ALGORITHM #1
-for street in streets:
-	if not street.E in intersections:
-		intersections[street.value.E] = Intersection(?)
-
-	intersections[street.E].add_street_in(street.key)
-
-
-
-intersections = {}
-
-
-# Create intersection map. ALGORITHM #2
-for street in streets:
-	if not street.B in intersections:
-		ins = Intersection()
-		intersections[street.value.B] = ins
-		intersections[street.value.B].ins.add_street_out(street.value.E)
-
-	if not street.E in intersections:
-		ins = Intersection()
-		intersections[street.value.E] = ins
-		intersections[street.value.E].ins.add_street_in(street.value.B)
-
-	if
+intersections = OrderedDict()
+# Create intersection map
+for street_key, street_value in streets.items():
+	if not street_value['B'] in intersections:
+		ins = Intersection(street_value['B'])
+		intersections[street_value['B']] = ins
 	
 
-	"""
+	if not street_value['E'] in intersections:
+		ins = Intersection(street_value['E'])
+		intersections[street_value['E']] = ins
+
+	breakpoint()
+	# Add out intersections and streets
+	intersections[street_value['B']].add_intersection_out(intersections[street_value['E']])
+	intersections[street_value['B']].add_street_out(street_key)
+
+	# Add in intersections and streets
+	intersections[street_value['E']].add_intersection_in(intersections[street_value['B']])
+	intersections[street_value['E']].add_street_in(street_key)
+
+breakpoint()
+"""
 	# Getting the best remaining books from a library
 	def get_best_books(library, assigned_books, curr_time):
 		# How much time do we have remaining?
