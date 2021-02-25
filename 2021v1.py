@@ -52,7 +52,7 @@ for FILE in os.listdir('.'):
 	
 	streets = OrderedDict()
 	# Read in streets. Key = street id value = {start_interserction, end_intersection, name, seconds}
-	for line_ix in range(1, S):
+	for line_ix in range(1, S+1):
 		# #start_intersection, #end_intersection, #seconds
 		B, E, name, L =  list(map(str, lines[line_ix].strip().split()))
 		streets[name] = {"B": int(B), "E": int(E), "L": int(L)}
@@ -79,7 +79,6 @@ for street_key, street_value in streets.items():
 		ins = Intersection(street_value['E'])
 		intersections[street_value['E']] = ins
 
-	breakpoint()
 	# Add out intersections and streets
 	intersections[street_value['B']].add_intersection_out(intersections[street_value['E']])
 	intersections[street_value['B']].add_street_out(street_key)
@@ -88,7 +87,6 @@ for street_key, street_value in streets.items():
 	intersections[street_value['E']].add_intersection_in(intersections[street_value['B']])
 	intersections[street_value['E']].add_street_in(street_key)
 
-breakpoint()
 """
 	# Getting the best remaining books from a library
 	def get_best_books(library, assigned_books, curr_time):
