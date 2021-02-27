@@ -125,7 +125,7 @@ for FILE in os.listdir('.'):
 	length = 0
 	current_street = car_map[shortestCar].car_path_list[1]
 	# Get the length of the second road
-	while (#not at the end of the path):
+	while (not current_street == null):
 		for i, street in enumerate(firstIntersection.streets_out):
 			if street == current_street:
 				for street_key, street_value in streets.items():
